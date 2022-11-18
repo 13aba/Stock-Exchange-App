@@ -127,7 +127,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\StockEx\StockEx\CSVReader.cpp" />
+    <ClCompile Include="..\StockEx\StockEx\MerkelMain.cpp" />
+    <ClCompile Include="..\StockEx\StockEx\OrderBook.cpp" />
+    <ClCompile Include="..\StockEx\StockEx\OrderBookEntry.cpp" />
     <ClCompile Include="StockExchange.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\StockEx\StockEx\20200317.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\StockEx\StockEx\CSVReader.h" />
+    <ClInclude Include="..\StockEx\StockEx\MerkelMain.h" />
+    <ClInclude Include="..\StockEx\StockEx\OrderBook.h" />
+    <ClInclude Include="..\StockEx\StockEx\OrderBookEntry.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
