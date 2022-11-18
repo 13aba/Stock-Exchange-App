@@ -1,0 +1,136 @@
+#include "MerkelMain.h"
+#include <iostream>
+#include <vector>
+#include "CSVReader.h"
+
+MerkelMain::MerkelMain()
+{
+
+}
+
+void MerkelMain::init()
+{
+    int input;
+    while (true) 
+    {
+        printMenu();
+        input = getUserInput();
+        processUserInput(input);
+        if (input == 7) break;
+    }
+}
+
+void MerkelMain::printMenu() {
+
+    //Print help
+    std::cout << "1: Print Help" << std::endl;
+    //Print exchange stats
+    std::cout << "2: Exchange Stats" << std::endl;
+    //Make offer
+    std::cout << "3: Make an offer" << std::endl;
+    //Make bid
+    std::cout << "4: Make a bid" << std::endl;
+    //Print wallet
+    std::cout << "5: Check wallet" << std::endl;
+    //Continue
+    std::cout << "6: Continue" << std::endl;
+    //Exit
+    std::cout << "7: Exit" << std::endl;
+    //GAP
+    std::cout << "================" << std::endl;
+    std::cout << "Type 1-7" << std::endl;
+
+}
+
+int MerkelMain::getUserInput() {
+    //User choice
+    int userChoise;
+    std::cin >> userChoise;
+    return userChoise;
+}
+
+void MerkelMain::printBadOption() {
+    std::cout << "Invalid input. Please type between 1-7" << std::endl;
+}
+
+void MerkelMain::printHelp() {
+    std::cout << "You need to make offer and bids to increase your wallet value" << std::endl;
+}
+
+void MerkelMain::printExchangeRate() {
+    /*
+    std::cout << "Entry size: " << entries.size() << std::endl;
+    unsigned int bids = 0;
+    unsigned int asks = 0;
+    for (OrderBookEntry& e : entries)
+    {
+        if (e.orderType == OrderBookType::bid)
+        {
+            bids++;
+        }
+        if (e.orderType == OrderBookType::ask)
+        {
+            asks++;
+        }
+    }
+    */
+}
+
+void MerkelMain::makeOffer() {
+    std::cout << "Make an offer" << std::endl;
+}
+
+void MerkelMain::makeBid() {
+    std::cout << "Make a bid" << std::endl;
+}
+
+void MerkelMain::checkWallet() {
+    std::cout << "Wallet is empty" << std::endl;
+}
+
+
+void MerkelMain::goToNext() {
+    std::cout << "Press next" << std::endl;
+}
+
+void MerkelMain::exit() {
+    std::cout << "Goodbye" << std::endl;
+}
+
+void MerkelMain::processUserInput(int userChoise) {
+    if (userChoise == 1) 
+    {
+        printHelp();
+    }
+    else if (userChoise == 2) 
+    {
+        printExchangeRate();
+    }
+    else if (userChoise == 3) 
+    {
+        makeOffer();
+    }
+    else if (userChoise == 4) 
+    {
+        makeBid();
+    }
+    else if (userChoise == 5) 
+    {
+        checkWallet();
+    }
+    else if (userChoise == 6) 
+    {
+        goToNext();
+    }
+    else if (userChoise == 7) 
+    {
+        exit();
+    }
+    else 
+    {
+        printBadOption();
+    }
+
+   
+}
+
