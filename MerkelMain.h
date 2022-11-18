@@ -24,6 +24,6 @@ class MerkelMain
         void exit();
         void processUserInput(int userChoise);
 
-        OrderBook OrderBook{ "20200317.csv" };
+        OrderBook orderBook = OrderBook{ "20200317.csv" };
 };
 

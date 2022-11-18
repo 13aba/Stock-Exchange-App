@@ -10,8 +10,13 @@ class OrderBook
 	public:  
 		OrderBook(std::string fileName);
 		std::vector<std::string> getKnownProducts();
-		std::vector<std::string> getOrders(OrderBookType type, std::string product, std::string timestamp);
+		std::vector<OrderBookEntry> getOrders(OrderBookType type, std::string product, std::string timestamp);
+
+		static double getHighestPrice(std::vector<OrderBookEntry>& orders);
+		static double getLowestPrice(std::vector<OrderBookEntry>& orders);
+
 	private:
 		std::vector<OrderBookEntry> orders;
+
 };
 

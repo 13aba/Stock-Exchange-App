@@ -58,22 +58,14 @@ void MerkelMain::printHelp() {
 }
 
 void MerkelMain::printExchangeRate() {
-    /*
-    std::cout << "Entry size: " << entries.size() << std::endl;
-    unsigned int bids = 0;
-    unsigned int asks = 0;
-    for (OrderBookEntry& e : entries)
+    for (std::string const s : orderBook.getKnownProducts())
     {
-        if (e.orderType == OrderBookType::bid)
-        {
-            bids++;
-        }
-        if (e.orderType == OrderBookType::ask)
-        {
-            asks++;
-        }
+        std::cout << "Product: " << s << std::endl;
+        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask, s, "2020/03/17 17:01:24.884492");
+        std::cout << "Ask orders " << entries.size() << std::endl;
+        std::cout << "Max orders " << orderBook.getHighestPrice(entries) << std::endl;
+        std::cout << "Min orders " << orderBook.getLowestPrice(entries) << std::endl;
     }
-    */
 }
 
 void MerkelMain::makeOffer() {

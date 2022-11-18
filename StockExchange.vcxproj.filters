@@ -18,35 +18,35 @@
     <ClCompile Include="StockExchange.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\StockEx\StockEx\CSVReader.cpp">
+    <ClCompile Include="CSVReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\StockEx\StockEx\MerkelMain.cpp">
+    <ClCompile Include="MerkelMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\StockEx\StockEx\OrderBook.cpp">
+    <ClCompile Include="OrderBook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\StockEx\StockEx\OrderBookEntry.cpp">
+    <ClCompile Include="OrderBookEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\StockEx\StockEx\CSVReader.h">
+    <ClInclude Include="OrderBook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\StockEx\StockEx\MerkelMain.h">
+    <ClInclude Include="CSVReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\StockEx\StockEx\OrderBook.h">
+    <ClInclude Include="MerkelMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\StockEx\StockEx\OrderBookEntry.h">
+    <ClInclude Include="OrderBookEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\StockEx\StockEx\20200317.csv">
+    <None Include="20200317.csv">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
