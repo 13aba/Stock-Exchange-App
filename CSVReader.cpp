@@ -86,3 +86,28 @@ OrderBookEntry CSVReader::stringsToBe(std::vector<std::string> tokens) {
 
 	return entry;
 }
+
+OrderBookEntry CSVReader::stringsToBe(std::string _price, 
+                                        std::string _amount, 
+                                        std::string _timestamp,      
+                                        std::string _product, 
+                                        OrderBookType _orderType) 
+{
+    double price;
+    double amount;
+
+    try
+    {
+        price = std::stod(_price);
+        amount = std::stod(_amount);
+    }
+    catch (const std::exception& e) {
+        std::cout << "CSVReader::stringsToBe BAD FLOAT" << std::endl;
+        throw;
+    }
+
+    OrderBookEntry obe{ price, amount, _timestamp, _product, _orderType };
+
+    return obe;
+
+}

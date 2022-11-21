@@ -1,5 +1,6 @@
 #include "OrderBook.h"
 #include <map>
+#include <algorithm>
 
 
 OrderBook::OrderBook(std::string fileName){
@@ -88,4 +89,52 @@ std::string OrderBook::getNextTime(std::string timestamp) {
 		nextTime = orders[0].timestamp;
 	}
 	return nextTime;
+}
+
+void OrderBook::insertOrder(OrderBookEntry order) {
+	orders.push_back(order);
+	std::sort(orders.begin(), orders.end(), OrderBookEntry::compareOrdersTimestamp);
+}
+
+std::vector<OrderBookEntry> OrderBook::matchAskBid(std::string product, std::string timestamp) {
+
+	std::vector<OrderBookEntry> asks = getOrders(OrderBookType::ask, product, timestamp);
+	std::vector<OrderBookEntry> bids = getOrders(OrderBookType::ask, product, timestamp);
+	std::vector<OrderBookEntry> sales;
+
+	std::sort(asks.begin(), asks.end(), OrderBookEntry::compareOrdersPriceAsc);
+	std::sort(bids.begin(), bids.end(), OrderBookEntry::compareOrdersPriceDesc);
+
+	for (OrderBookEntry& a : asks) 
+	{
+		for (OrderBookEntry& b : bids) 
+		{	
+			if (b.price >= a.price) 
+			{
+				OrderBookEntry sale{ a.price, 0, timestamp, product, OrderBookType::sale };
+				if (b.amount == a.amount)
+				{
+					sale.amount = a.amount;
+					sales.push_back(sale);
+					b.amount = 0;
+					break;
+				}
+				if (b.amount > a.amount)
+				{
+					sale.amount = a.amount;
+					sales.push_back(sale);
+					b.amount = b.amount - a.amount;
+					break;
+				}
+				if (b.amount < a.amount)
+				{
+					sale.amount = b.amount;
+					sales.push_back(sale);
+					a.amount = a.amount - b.amount;
+				}
+			}
+		}
+	}
+
+	return sales;
 }
