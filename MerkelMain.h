@@ -24,6 +24,8 @@ class MerkelMain
         void exit();
         void processUserInput(int userChoise);
 
+        std::string currentTime;
+
         OrderBook orderBook = OrderBook{ "20200317.csv" };
 };
 

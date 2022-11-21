@@ -58,3 +58,34 @@ double OrderBook::getLowestPrice(std::vector<OrderBookEntry>& orders) {
 	}
 	return min;
 }
+
+double OrderBook::getQuotedSpread(std::vector<OrderBookEntry>& orders) {
+	double min = getLowestPrice(orders);
+	double max = getHighestPrice(orders);
+
+	double normalSpread = (max - min);
+	double midpoint = (max + min) / 2;
+
+	double qSpread = (normalSpread / midpoint) * 100;
+	return qSpread;
+}
+
+std::string OrderBook::getEarliestTime() {
+	return orders[0].timestamp;
+}
+
+std::string OrderBook::getNextTime(std::string timestamp) {
+
+	std::string nextTime ="";
+
+	for (OrderBookEntry& e : orders) {
+		if (e.timestamp > timestamp) {
+			nextTime = e.timestamp;
+			break;
+		}
+	}
+	if (nextTime == "") {
+		nextTime = orders[0].timestamp;
+	}
+	return nextTime;
+}

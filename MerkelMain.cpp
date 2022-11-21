@@ -11,6 +11,7 @@ MerkelMain::MerkelMain()
 void MerkelMain::init()
 {
     int input;
+    currentTime = orderBook.getEarliestTime();
     while (true) 
     {
         printMenu();
@@ -40,6 +41,7 @@ void MerkelMain::printMenu() {
     std::cout << "================" << std::endl;
     std::cout << "Type 1-7" << std::endl;
 
+    std::cout << "Current time is " << currentTime << std::endl;
 }
 
 int MerkelMain::getUserInput() {
@@ -61,10 +63,11 @@ void MerkelMain::printExchangeRate() {
     for (std::string const s : orderBook.getKnownProducts())
     {
         std::cout << "Product: " << s << std::endl;
-        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask, s, "2020/03/17 17:01:24.884492");
+        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask, s, currentTime);
         std::cout << "Ask orders " << entries.size() << std::endl;
         std::cout << "Max orders " << orderBook.getHighestPrice(entries) << std::endl;
         std::cout << "Min orders " << orderBook.getLowestPrice(entries) << std::endl;
+        std::cout << "Quoted Spread: " << orderBook.getQuotedSpread(entries) << "%" << std::endl;
     }
 }
 
@@ -82,7 +85,8 @@ void MerkelMain::checkWallet() {
 
 
 void MerkelMain::goToNext() {
-    std::cout << "Press next" << std::endl;
+    std::cout << "Continue to next time frame" << std::endl;
+    currentTime = orderBook.getNextTime(currentTime);
 }
 
 void MerkelMain::exit() {
