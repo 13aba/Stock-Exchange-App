@@ -60,12 +60,10 @@ double OrderBook::getLowestPrice(std::vector<OrderBookEntry>& orders) {
 	return min;
 }
 
-double OrderBook::getQuotedSpread(std::vector<OrderBookEntry>& orders) {
-	double min = getLowestPrice(orders);
-	double max = getHighestPrice(orders);
+double OrderBook::getQuotedSpread(double minAsk, double maxBid) {
 
-	double normalSpread = (max - min);
-	double midpoint = (max + min) / 2;
+	double normalSpread = (minAsk - maxBid);
+	double midpoint = (maxBid + minAsk) / 2;
 
 	double qSpread = (normalSpread / midpoint) * 100;
 	return qSpread;
@@ -99,7 +97,7 @@ void OrderBook::insertOrder(OrderBookEntry order) {
 std::vector<OrderBookEntry> OrderBook::matchAskBid(std::string product, std::string timestamp) {
 
 	std::vector<OrderBookEntry> asks = getOrders(OrderBookType::ask, product, timestamp);
-	std::vector<OrderBookEntry> bids = getOrders(OrderBookType::ask, product, timestamp);
+	std::vector<OrderBookEntry> bids = getOrders(OrderBookType::bid, product, timestamp);
 	std::vector<OrderBookEntry> sales;
 
 	std::sort(asks.begin(), asks.end(), OrderBookEntry::compareOrdersPriceAsc);
@@ -111,7 +109,18 @@ std::vector<OrderBookEntry> OrderBook::matchAskBid(std::string product, std::str
 		{	
 			if (b.price >= a.price) 
 			{
-				OrderBookEntry sale{ a.price, 0, timestamp, product, OrderBookType::sale };
+				OrderBookEntry sale{ a.price, 0, timestamp, product, OrderBookType::asksale};
+
+				if (b.username == "simuser") 
+				{
+					sale.username = "simuser";
+					sale.orderType = OrderBookType::bidsale;
+				}
+				if (a.username == "simuser")
+				{
+					sale.username = "simuser";
+					sale.orderType = OrderBookType::asksale;
+				}
 				if (b.amount == a.amount)
 				{
 					sale.amount = a.amount;

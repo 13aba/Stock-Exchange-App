@@ -83,3 +83,32 @@ std::string Wallet::walletInString()
 	}
 	return walletString;
 }
+
+void Wallet::processSale(OrderBookEntry& sale)
+{
+	
+	std::vector<std::string> currenciesReader = CSVReader::tokenise(sale.product, '/');
+
+	if (sale.orderType == OrderBookType::asksale)
+	{
+		double outgoingAmount = sale.amount;
+		std::string outgoingCurrency = currenciesReader[0];
+
+		double incomingAmount = sale.amount * sale.price;
+		std::string incomingCurrency = currenciesReader[1];
+
+		currencies[incomingCurrency] += incomingAmount;
+		currencies[outgoingCurrency] -= outgoingAmount;
+	}
+	if (sale.orderType == OrderBookType::bidsale)
+	{
+		double outgoingAmount = sale.amount*sale.price;
+		std::string outgoingCurrency = currenciesReader[1];
+
+		double incomingAmount = sale.amount;
+		std::string incomingCurrency = currenciesReader[0];
+
+		currencies[incomingCurrency] += incomingAmount;
+		currencies[outgoingCurrency] -= outgoingAmount;
+	}
+}

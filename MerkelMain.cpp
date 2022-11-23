@@ -73,16 +73,22 @@ void MerkelMain::printExchangeRate() {
     for (std::string const s : orderBook.getKnownProducts())
     {
         std::cout << "Product: " << s << std::endl;
-        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask, s, currentTime);
-        std::cout << "Ask orders " << entries.size() << std::endl;
-        std::cout << "Max orders " << orderBook.getHighestPrice(entries) << std::endl;
-        std::cout << "Min orders " << orderBook.getLowestPrice(entries) << std::endl;
-        std::cout << "Quoted Spread: " << orderBook.getQuotedSpread(entries) << "%" << std::endl;
+        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, s, currentTime);
+        std::cout << "Ask orders " << askEntries.size() << std::endl;
+
+        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, s, currentTime);
+        std::cout << "Bid orders " << bidEntries.size() << std::endl;
+
+        double min = orderBook.getLowestPrice(askEntries);
+        double max = orderBook.getHighestPrice(bidEntries);
+        std::cout << "Max bid price: " << max << std::endl;
+        std::cout << "Min ask price: " << min << std::endl;
+        std::cout << "Quoted Spread: " << orderBook.getQuotedSpread(min, max) << "%" << std::endl;
     }
 }
 
 void MerkelMain::makeOffer() {
-    std::cout << "Make an ask: enter the amount: product,price, and amount. eg: ETH/BTC,200,0.5" << std::endl;
+    std::cout << "Make an ask: enter the amount: product, price, and amount. eg: ETH/BTC,200,0.5" << std::endl;
     std::string input;
 
     std::getline(std::cin, input);
@@ -104,6 +110,7 @@ void MerkelMain::makeOffer() {
                 tokens[0],
                 OrderBookType::ask
             );
+            obe.username = "simuser";
             if (wallet.canFulfillOrder(obe))
             {
                 std::cout << "Order has been placed" << std::endl;
@@ -122,7 +129,7 @@ void MerkelMain::makeOffer() {
 }
 
 void MerkelMain::makeBid() {
-    std::cout << "Make a bid: enter the amount: product,price, and amount. eg: ETH/BTC,200,0.5" << std::endl;
+    std::cout << "Make a bid: enter the amount: product, price, and amount. eg: ETH/BTC,200,0.5" << std::endl;
     std::string input;
 
     std::getline(std::cin, input);
@@ -144,6 +151,7 @@ void MerkelMain::makeBid() {
                 tokens[0],
                 OrderBookType::bid
             );
+            obe.username = "simuser";
             if (wallet.canFulfillOrder(obe))
             {
                 std::cout << "Order has been placed" << std::endl;
@@ -167,12 +175,25 @@ void MerkelMain::checkWallet() {
 
 
 void MerkelMain::goToNext() {
-    std::cout << "Continue to next time frame" << std::endl;
-    std::vector<OrderBookEntry> sales =  orderBook.matchAskBid("ETH/BTC", currentTime);
-    for (OrderBookEntry& e : sales)
+
+    std::cout << "Going to next time frame. " << std::endl;
+    for (std::string p : orderBook.getKnownProducts())
     {
-        std::cout << "Sale made with amount of: " << e.amount << std::endl;
+        std::cout << "matching " << p << std::endl;
+        std::vector<OrderBookEntry> sales = orderBook.matchAskBid(p, currentTime);
+        std::cout << "Sales: " << sales.size() << std::endl;
+        for (OrderBookEntry& sale : sales)
+        {
+            std::cout << "Sale price: " << sale.price << " amount " << sale.amount << std::endl;
+            if (sale.username == "simuser")
+            {
+                // update the wallet
+                wallet.processSale(sale);
+            }
+        }
     }
+
+    currentTime = orderBook.getNextTime(currentTime);
     currentTime = orderBook.getNextTime(currentTime);
 }
 

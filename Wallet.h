@@ -21,6 +21,8 @@ class Wallet
 
 		std::string walletInString();
 
+		void processSale(OrderBookEntry& e);
+
 	private: 
 
 		std::map<std::string, double> currencies;

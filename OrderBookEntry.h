@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 
-enum class OrderBookType {bid, ask, nan, sale};
+enum class OrderBookType {bid, ask, nan, bidsale, asksale};
 
 class OrderBookEntry {
 public:
-    OrderBookEntry(double _price, double _amount, std::string _timestamp, std::string _product, OrderBookType _orderType);
+    OrderBookEntry(double _price, double _amount, std::string _timestamp, std::string _product, OrderBookType _orderType, std::string username = "dataset");
 
     static OrderBookType stringToOrderType(std::string String);
     static bool compareOrdersTimestamp(OrderBookEntry e1, OrderBookEntry e2)
@@ -26,4 +26,5 @@ public:
     std::string timestamp;
     std::string product;
     OrderBookType orderType;
+    std::string username;
 }; 
