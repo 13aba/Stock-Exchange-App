@@ -132,6 +132,7 @@
     <ClCompile Include="OrderBook.cpp" />
     <ClCompile Include="OrderBookEntry.cpp" />
     <ClCompile Include="StockExchange.cpp" />
+    <ClCompile Include="Wallet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="20200317.csv" />
@@ -141,6 +142,7 @@
     <ClInclude Include="MerkelMain.h" />
     <ClInclude Include="OrderBook.h" />
     <ClInclude Include="OrderBookEntry.h" />
+    <ClInclude Include="Wallet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

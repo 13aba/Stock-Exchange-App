@@ -12,6 +12,7 @@ void MerkelMain::init()
 {
     int input;
     currentTime = orderBook.getEarliestTime();
+    wallet.insertCurrency("BTC", 10);
     while (true) 
     {
         printMenu();
@@ -103,7 +104,15 @@ void MerkelMain::makeOffer() {
                 tokens[0],
                 OrderBookType::ask
             );
-            orderBook.insertOrder(obe);
+            if (wallet.canFulfillOrder(obe))
+            {
+                std::cout << "Order has been placed" << std::endl;
+                orderBook.insertOrder(obe);
+            }
+            else
+            {
+                std::cout << "Not enough fund" << std::endl;
+            }
         }
         catch (const std::exception&)
         {
@@ -135,7 +144,15 @@ void MerkelMain::makeBid() {
                 tokens[0],
                 OrderBookType::bid
             );
-            orderBook.insertOrder(obe);
+            if (wallet.canFulfillOrder(obe))
+            {
+                std::cout << "Order has been placed" << std::endl;
+                orderBook.insertOrder(obe);
+            }
+            else
+            {
+                std::cout << "Not enough fund" << std::endl;
+            }
         }
         catch (const std::exception&)
         {
@@ -145,7 +162,7 @@ void MerkelMain::makeBid() {
 }
 
 void MerkelMain::checkWallet() {
-    std::cout << "Wallet is empty" << std::endl;
+    std::cout << "Wallet: " << wallet.walletInString() << std::endl;
 }
 
 

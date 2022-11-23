@@ -7,6 +7,7 @@
 #include "MerkelMain.h"
 #include "CSVReader.h"
 #include "OrderBook.h"
+#include "Wallet.h"
 
 
 int main()
