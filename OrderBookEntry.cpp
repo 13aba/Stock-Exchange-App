@@ -12,13 +12,14 @@ OrderBookEntry::OrderBookEntry(double _price, double _amount, std::string _times
 }
 
 OrderBookType OrderBookEntry::stringToOrderType(std::string s) {
+	//Return order book type depending on the string
 	if (s == "ask") {
 		return OrderBookType::ask;
 	}
 	if (s == "bid") {
 		return OrderBookType::bid;
 	}
-	
+	//Return NaN if string does not match anything else
 	return OrderBookType::nan;
 }
 

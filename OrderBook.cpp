@@ -13,12 +13,12 @@ std::vector<std::string> OrderBook::getKnownProducts() {
 
 	for (OrderBookEntry& e : orders)
 	{
-		productMap[e.product] = true;
+		productMap[e.product] = true; //for every entry add map with entries product and true boolean
 	}
 
 	for (auto const& e : productMap)
 	{
-		products.push_back(e.first);
+		products.push_back(e.first); //Push every product from map to vector 
 	}
 
 	return products;
@@ -26,7 +26,8 @@ std::vector<std::string> OrderBook::getKnownProducts() {
 
 std::vector<OrderBookEntry> OrderBook::getOrders(OrderBookType type, std::string product, std::string timestamp) {
 	std::vector<OrderBookEntry> ordersFiltered;
-	for (OrderBookEntry& e : orders)
+
+	for (OrderBookEntry& e : orders) //check if entry match given variables and push it to new vector if matched
 	{
 		if (e.orderType == type && e.product == product && e.timestamp == timestamp)
 		{
@@ -65,12 +66,12 @@ double OrderBook::getQuotedSpread(double minAsk, double maxBid) {
 	double normalSpread = (minAsk - maxBid);
 	double midpoint = (maxBid + minAsk) / 2;
 
-	double qSpread = (normalSpread / midpoint) * 100;
+	double qSpread = (normalSpread / midpoint) * 100; //Quoted spread in percentile
 	return qSpread;
 }
 
 std::string OrderBook::getEarliestTime() {
-	return orders[0].timestamp;
+	return orders[0].timestamp; //Return first orders timestamp since the order book is sorted
 }
 
 std::string OrderBook::getNextTime(std::string timestamp) {
@@ -78,20 +79,20 @@ std::string OrderBook::getNextTime(std::string timestamp) {
 	std::string nextTime ="";
 
 	for (OrderBookEntry& e : orders) {
-		if (e.timestamp > timestamp) {
-			nextTime = e.timestamp;
+		if (e.timestamp > timestamp) {     //Check if entry timestamp is older than current one 
+			nextTime = e.timestamp;  //If it is older then set current time to entry timestmap
 			break;
 		}
 	}
 	if (nextTime == "") {
-		nextTime = orders[0].timestamp;
+		nextTime = orders[0].timestamp; //If there is no older timestamp then loop back to first one
 	}
 	return nextTime;
 }
 
 void OrderBook::insertOrder(OrderBookEntry order) {
-	orders.push_back(order);
-	std::sort(orders.begin(), orders.end(), OrderBookEntry::compareOrdersTimestamp);
+	orders.push_back(order); //Insert the order to back of the order book
+	std::sort(orders.begin(), orders.end(), OrderBookEntry::compareOrdersTimestamp); //Sort the order book again
 }
 
 std::vector<OrderBookEntry> OrderBook::matchAskBid(std::string product, std::string timestamp) {
@@ -100,14 +101,14 @@ std::vector<OrderBookEntry> OrderBook::matchAskBid(std::string product, std::str
 	std::vector<OrderBookEntry> bids = getOrders(OrderBookType::bid, product, timestamp);
 	std::vector<OrderBookEntry> sales;
 
-	std::sort(asks.begin(), asks.end(), OrderBookEntry::compareOrdersPriceAsc);
-	std::sort(bids.begin(), bids.end(), OrderBookEntry::compareOrdersPriceDesc);
+	std::sort(asks.begin(), asks.end(), OrderBookEntry::compareOrdersPriceAsc); //sort ask orders beginning from lowest to highest
+	std::sort(bids.begin(), bids.end(), OrderBookEntry::compareOrdersPriceDesc); //sort bid orders beginning from highest to lowest 
 
 	for (OrderBookEntry& a : asks) 
 	{
 		for (OrderBookEntry& b : bids) 
 		{	
-			if (b.price >= a.price) 
+			if (b.price >= a.price)   //Only match if bid price is higher than ask price
 			{
 				OrderBookEntry sale{ a.price, 0, timestamp, product, OrderBookType::asksale};
 
@@ -121,25 +122,26 @@ std::vector<OrderBookEntry> OrderBook::matchAskBid(std::string product, std::str
 					sale.username = "simuser";
 					sale.orderType = OrderBookType::asksale;
 				}
-				if (b.amount == a.amount)
+				if (b.amount == a.amount)  //If bid amount is equal to ask amount
 				{
-					sale.amount = a.amount;
-					sales.push_back(sale);
-					b.amount = 0;
+					sale.amount = a.amount; 
+					sales.push_back(sale);  //add sale order entry
+					b.amount = 0;  //clear the bid since its cleared
 					break;
 				}
-				if (b.amount > a.amount)
+				if (b.amount > a.amount)   //If bid amount is bigger than ask amount
 				{
 					sale.amount = a.amount;
-					sales.push_back(sale);
-					b.amount = b.amount - a.amount;
+					sales.push_back(sale); //add sale order entry 
+					b.amount = b.amount - a.amount;  //decrease the bid amount by fulfilled amount
 					break;
 				}
-				if (b.amount < a.amount)
+				if (b.amount < a.amount)   //If ask amount is bigger than bid
 				{
 					sale.amount = b.amount;
-					sales.push_back(sale);
-					a.amount = a.amount - b.amount;
+					sales.push_back(sale);  //add sale order entry
+					a.amount = a.amount - b.amount;   //descrease the ask amount by fulfilled bid amount 
+					//No break out of this loop since ask amount is still not fulfilled
 				}
 			}
 		}
