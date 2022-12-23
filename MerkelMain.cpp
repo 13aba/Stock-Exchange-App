@@ -72,7 +72,7 @@ void MerkelMain::processUserInput(std::vector<std::string>  userChoise) {
         }
         else if (pointer == "spread")
         {
-
+            printSpread(userChoise[1]);
         }
         else if (pointer == "min")
         {
@@ -99,7 +99,7 @@ void MerkelMain::processUserInput(std::vector<std::string>  userChoise) {
 }
 
 void MerkelMain::printHelp() {
-    std::cout << "Possible commands are: prod, time, step, max, min, avg, predict." << std::endl;
+    std::cout << "Possible commands are: prod, time, step, spread, max, min, avg, predict." << std::endl;
     std::cout << "Use help <cmd> for more detailed explanation of commands. eg: help max" << std::endl;
 }
 
@@ -118,23 +118,23 @@ void MerkelMain::printDetailedHelp(std::string command) {
     }
     else if (command == "spread")
     {
-        std::cout << "spread: Calculates quoted spread of the current time step" << std::endl;
+        std::cout << "spread: Calculates quoted spread of the current time step. example: spread BTC/USDT" << std::endl;
     }
     else if (command == "min")
     {
-        std::cout << "min: Finds the smallest ask/bid for any product" << std::endl;
+        std::cout << "min: Finds the smallest ask/bid for any product. example: min BTC/USDT ask" << std::endl;
     }
     else if (command == "max")
     {
-        std::cout << "max: Finds the biggest ask/bid for any product" << std::endl;
+        std::cout << "max: Finds the biggest ask/bid for any product. example: min BTC/USDT ask" << std::endl;
     }
     else if (command == "avg")
     {
-        std::cout << "avg: Finds the average ask/bid for any product in certain timestep" << std::endl;
+        std::cout << "avg: Finds the average ask/bid for any product in certain timestep. example: avg BTC/USDT ask 10" << std::endl;
     }
     else if (command == "predict")
     {
-        std::cout << "predict: Predicts the min/max of ask/bid for any product" << std::endl;
+        std::cout << "predict: Predicts the min/max of ask/bid for any product. example: predict max BTC/USDT ask" << std::endl;
     }
     else
     {
@@ -161,6 +161,27 @@ void MerkelMain::goToNext() {
     //Set the timer to next timeframe
     currentTime = orderBook.getNextTime(currentTime);
     std::cout << "Time is : " << currentTime << std::endl;
+}
+
+void MerkelMain::printSpread(std::string product) {
+    //Filter order book with given type and product
+    std::vector<OrderBookEntry> askOrders = orderBook.getOrders(OrderBookType::ask, product, currentTime);
+    std::vector<OrderBookEntry> bidOrders = orderBook.getOrders(OrderBookType::bid, product, currentTime);
+    //If user input correct product
+    if (askOrders.size() > 0)
+    {
+        //Find minimum ask and maximum bid
+        double minAsk = orderBook.getLowestPrice(askOrders);
+        double maxBid = orderBook.getHighestPrice(bidOrders);
+        //Find spread 
+        double spread = orderBook.getQuotedSpread(minAsk, maxBid);
+        //Print spread
+        std::cout << "Quoted spread for " << product << " product is: " << spread << std::endl;
+    }
+    else  //If user inputted wrong product or there is no order matching that product
+    {
+        std::cout << "Could not find orders with given product! Please check and try again" << std::endl;
+    }
 }
 
 void MerkelMain::printMin(OrderBookType type, std::string product) {

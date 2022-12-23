@@ -22,6 +22,8 @@ class MerkelMain
         void printDetailedHelp(std::string command);
         /* Print all products*/
         void printProducts();
+        /*Find spread for given product*/
+        void printSpread(std::string product);
         /*Find min for given type and product*/
         void printMin(OrderBookType type, std::string product);
         /*Find min for given type and product*/
