@@ -16,9 +16,6 @@ class OrderBook
 		/* Filter book by type, product and timestamp*/
 		std::vector<OrderBookEntry> getOrders(OrderBookType type, std::string product, std::string timestamp);
 
-		/* Check and match if there is compatible bid and ask*/
-		std::vector<OrderBookEntry> matchAskBid(std::string products, std::string timestamp);
-
 		/* Get highest bid from given orders vector*/
 		static double getHighestPrice(std::vector<OrderBookEntry>& orders);
 
@@ -34,8 +31,6 @@ class OrderBook
 		/* Return next timeframe of given timestamp*/
 		std::string getNextTime(std::string timestamp);
 
-		/* insert order to the book*/
-		void insertOrder(OrderBookEntry order);
 
 	private:
 		/* Order Book in vector form*/

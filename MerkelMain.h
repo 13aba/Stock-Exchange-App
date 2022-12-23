@@ -13,31 +13,29 @@ class MerkelMain
 
     private:
         /* Print menu in the console*/
-        void printMenu();
-        /* Take user input from console*/
-        int getUserInput();
+        std::vector<std::string>  getUserInput();
         /* Print out warning if user added wrong input*/
         void printBadOption();
         /* Print out help options*/
         void printHelp();
-        /* Print out exchange stats including rate, min ask, max bid, and quoted spread*/
-        void printExchangeRate();
-        /* Create offer entry from user input*/
-        void makeOffer();
-        /* Create bid entry from user input*/
-        void makeBid();
-        /* Display user wallet in the console*/
-        void checkWallet();
-        /* Process the deals in this timeframe and go to next one*/
+        /* Print out detailed help for specific command*/
+        void printDetailedHelp(std::string command);
+        /* Print all products*/
+        void printProducts();
+        /*Find min for given type and product*/
+        void printMin(OrderBookType type, std::string product);
+        /*Find min for given type and product*/
+        void printMax(OrderBookType type, std::string product);
+        /*Go to next time step*/
         void goToNext();
         /* Close the programm*/
         void exit();
         /* Call the proper functions depending on the user input*/
-        void processUserInput(int userChoise);
+        void processUserInput(std::vector<std::string>  userChoise);
 
         std::string currentTime;
 
-        OrderBook orderBook = OrderBook{ "20200317.csv" };
+        OrderBook orderBook = OrderBook{ "20200601.csv" };
         Wallet wallet;
        
 };

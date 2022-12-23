@@ -14,6 +14,7 @@ std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFileName) {
 
     std::vector<OrderBookEntry> book;
 
+    std::cout << "Please wait app is loading" << std::endl;
     if (csvFile.is_open()) //Check if the file is open
     {
         while (std::getline(csvFile, line)) //Try to tokenise the line if there is one
@@ -33,7 +34,7 @@ std::vector<OrderBookEntry> CSVReader::readCSV(std::string csvFileName) {
     {
         std::cout << "trouble opening CSV File";   //If file does not open alert the user
     }
-    std::cout << "CSVReader::readCSV " << book.size() << std::endl;
+    std::cout << "Welcome to advisor bot application! Use help to for possible commands" << std::endl;
 
     return book;
 }

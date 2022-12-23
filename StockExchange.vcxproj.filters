@@ -52,7 +52,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="20200317.csv">
+    <None Include="20200601.csv">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

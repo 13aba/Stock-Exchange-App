@@ -135,14 +135,14 @@
     <ClCompile Include="Wallet.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="20200317.csv" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="CSVReader.h" />
     <ClInclude Include="MerkelMain.h" />
     <ClInclude Include="OrderBook.h" />
     <ClInclude Include="OrderBookEntry.h" />
     <ClInclude Include="Wallet.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="20200601.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

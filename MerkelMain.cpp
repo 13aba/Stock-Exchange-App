@@ -10,250 +10,206 @@ MerkelMain::MerkelMain()
 
 void MerkelMain::init()
 {
-    int input;
+    std::vector<std::string> input;
     //set current time to earliest one in the order book
     currentTime = orderBook.getEarliestTime();
-    //add some currency to the user wallet
-    wallet.insertCurrency("BTC", 10);
-    wallet.insertCurrency("ETH", 100);
-    wallet.insertCurrency("USDT", 3000);
     while (true) 
     {
-        printMenu();
         input = getUserInput();
         processUserInput(input);
-        //Break the loop if user input exit code
-        if (input == 7) break;
+        //Space for better readibility
+        std::cout << "" << std::endl;
     }
 }
 
-
-void MerkelMain::printMenu() {
-
-    //Print help
-    std::cout << "1: Print Help" << std::endl;
-    //Print exchange stats
-    std::cout << "2: Exchange Stats" << std::endl;
-    //Make offer
-    std::cout << "3: Make an ask" << std::endl;
-    //Make bid
-    std::cout << "4: Make a bid" << std::endl;
-    //Print wallet
-    std::cout << "5: Check wallet" << std::endl;
-    //Continue
-    std::cout << "6: Continue" << std::endl;
-    //Exit
-    std::cout << "7: Exit" << std::endl;
-    //GAP
-    std::cout << "================" << std::endl;
-    std::cout << "Type 1-7" << std::endl;
-
-    std::cout << "Current time is " << currentTime << std::endl;
-}
-
-int MerkelMain::getUserInput() {
+std::vector<std::string>  MerkelMain::getUserInput() {
     //User choice
-    int userChoise = 0;
+    std::vector<std::string> userInput;
     std::string line;
     std::getline(std::cin, line);
     try //Get user choice from console line and convert it to integer
     {
-        userChoise = std::stoi(line);
+        userInput = CSVReader::tokenise(line, ' ');
     }
     catch (const std::exception& e) //If there is problem converting
     {
+        std::cout << "problem" << std::endl;
         //No specific response since userChoice will returned as 0 and bad input message will be delivered by processUserInput
     }
-    return userChoise;
-}
-
-void MerkelMain::printBadOption() {
-    std::cout << "Invalid input. Please type between 1-7" << std::endl;
-}
-
-void MerkelMain::printHelp() {
-    std::cout << "You need to make offer and bids to increase your wallet value" << std::endl;
-}
-
-void MerkelMain::printExchangeRate() {
-    //Print stats for every product on the order book
-    for (std::string const s : orderBook.getKnownProducts())
-    {
-        // Product name
-        std::cout << "Product: " << s << std::endl;
-        // Ask order size
-        std::vector<OrderBookEntry> askEntries = orderBook.getOrders(OrderBookType::ask, s, currentTime);
-        std::cout << "Ask orders " << askEntries.size() << std::endl;
-        //Bid order size
-        std::vector<OrderBookEntry> bidEntries = orderBook.getOrders(OrderBookType::bid, s, currentTime);
-        std::cout << "Bid orders " << bidEntries.size() << std::endl;
-        //Minimum ask and maximum bid
-        double min = orderBook.getLowestPrice(askEntries);
-        double max = orderBook.getHighestPrice(bidEntries);
-        std::cout << "Max bid price: " << max << std::endl;
-        std::cout << "Min ask price: " << min << std::endl;
-        //Qouted Spread
-        std::cout << "Quoted Spread: " << orderBook.getQuotedSpread(min, max) << "%" << std::endl;
-    }
-}
-
-void MerkelMain::makeOffer() {
-    // Print out instruction
-    std::cout << "Make an ask: enter the amount: product, price, and amount. eg: ETH/BTC,200,0.5" << std::endl;
-    std::string input;
-    // Get user input
-    std::getline(std::cin, input);
-    std::cout << "You typed " << input << std::endl;
-    // Split the user input into string vector
-    std::vector<std::string> tokens = CSVReader::tokenise(input, ',');
-    if (tokens.size() != 3)  //Check if the input is in correct form
-    {
-        std::cout << "Bad input for ask" << std::endl;   //Print out warning if input is in incorrect form
-    }
-    else 
-    {
-        try // Try to create new order book entry out of user input
-        {
-            OrderBookEntry obe = CSVReader::stringsToBe(
-                tokens[1],
-                tokens[2],
-                currentTime,
-                tokens[0],
-                OrderBookType::ask
-            );  // New entry
-            obe.username = "simuser";   //Set different username for the entry so it is distinct from data set entry
-            if (wallet.canFulfillOrder(obe))  //Check if the user has enough fund to place the order
-            {
-                std::cout << "Order has been placed" << std::endl;
-                orderBook.insertOrder(obe);
-            }
-            else 
-            {
-                std::cout << "Not enough fund" << std::endl;
-            }
-        }
-        catch (const std::exception&) //Throw exception and warning if it is not possible to create new entry
-        {
-            std::cout << "MerkelMain::makeOffer Bad input for entry!" << std::endl;
-        }  
-    }
-}
-
-void MerkelMain::makeBid() {
-    // Print out instruction
-    std::cout << "Make a bid: enter the amount: product, price, and amount. eg: ETH/BTC,200,0.5" << std::endl;
-    std::string input;
-    // Get user input
-    std::getline(std::cin, input);
-    std::cout << "You typed " << input << std::endl;
-    // Split the user input into string vector
-    std::vector<std::string> tokens = CSVReader::tokenise(input, ',');
-    if (tokens.size() != 3)     //Check if the input is in correct form
-    {
-        std::cout << "Bad input for bid" << std::endl;     //Print out warning if input is in incorrect form
-    }
-    else
-    {
-        try // Try to create new order book entry out of user input
-        {
-            OrderBookEntry obe = CSVReader::stringsToBe(
-                tokens[1],
-                tokens[2],
-                currentTime,
-                tokens[0],
-                OrderBookType::bid
-            );  // New entry
-            //Set different username for the entry so it is distinct from data set entry
-            obe.username = "simuser";
-
-            
-            //Check if the user has enough fund to place the order
-            if (wallet.canFulfillOrder(obe)) 
-            {
-                std::cout << "Order has been placed" << std::endl;
-                orderBook.insertOrder(obe);
-            }
-            else
-            {
-                std::cout << "Not enough fund" << std::endl;
-            }
-        }
-        catch (const std::exception&) //Throw exception and warning if it is not possible to create new entry
-        {
-            std::cout << "MerkelMain::makeBid Bad input for entry!" << std::endl;
-        }
-    }
-}
-
-void MerkelMain::checkWallet() {
-    //Print out wallet in string form
-    std::cout << "Wallet: " << wallet.walletInString() << std::endl;
-}
-
-
-void MerkelMain::goToNext() {
-
-    std::cout << "Going to next time frame. " << std::endl;
-    //Match the bids and sales for every products
-    for (std::string p : orderBook.getKnownProducts())
-    {
-        std::vector<OrderBookEntry> sales = orderBook.matchAskBid(p, currentTime);
-        std::cout << p << " sales: " << sales.size() << std::endl;
-        for (OrderBookEntry& sale : sales)
-        {
-            //Print out every sale that made
-            std::cout << "Sale price: " << sale.price << " amount " << sale.amount << std::endl;
-            if (sale.username == "simuser")
-            {
-                // update the wallet if sale is from user
-                wallet.processSale(sale);
-            }
-        }
-    }
-    //Set the timer to next timeframe
-    currentTime = orderBook.getNextTime(currentTime);
-}
-
-void MerkelMain::exit() {
-    std::cout << "Goodbye" << std::endl;
+    return userInput;
 }
 
 
 //Handles user input and call the proper function
-void MerkelMain::processUserInput(int userChoise) {
-    if (userChoise == 1) 
+void MerkelMain::processUserInput(std::vector<std::string>  userChoise) {
+     std::string pointer = userChoise[0];
+        if (pointer == "help") 
+        {
+            if (userChoise.size() == 1)
+            {
+                printHelp();
+            }
+            else if (userChoise.size() == 2)
+            {
+                printDetailedHelp(userChoise[1]);
+            }
+            else
+            {
+                printBadOption();
+            }
+        }
+        else if (pointer == "prod")
+        {
+            printProducts();
+        }
+        else if (pointer == "time")
+        {
+            std::cout << "Current time is: " << currentTime << std::endl;
+        }
+        else if (pointer == "step")
+        {
+            goToNext();
+        }
+        else if (pointer == "spread")
+        {
+
+        }
+        else if (pointer == "min")
+        {
+            OrderBookType type = OrderBookEntry::stringToOrderType(userChoise[2]);
+            printMin(type , userChoise[1]);
+        }
+        else if (pointer == "max")
+        {
+            OrderBookType type = OrderBookEntry::stringToOrderType(userChoise[2]);
+            printMax(type, userChoise[1]);
+        }
+        else if (pointer == "avg")
+        {
+            std::cout << "avg" << std::endl;
+        }
+        else if (pointer == "predict")
+        {
+            std::cout << "predict" << std::endl;
+        }
+        else
+        {
+            printBadOption();
+        }
+}
+
+void MerkelMain::printHelp() {
+    std::cout << "Possible commands are: prod, time, step, max, min, avg, predict." << std::endl;
+    std::cout << "Use help <cmd> for more detailed explanation of commands. eg: help max" << std::endl;
+}
+
+void MerkelMain::printDetailedHelp(std::string command) {
+    if (command == "prod")
     {
-        printHelp();
+        std::cout << "prod: Gives the list of all products" << std::endl;
     }
-    else if (userChoise == 2) 
+    else if (command == "time")
     {
-        printExchangeRate();
+        std::cout << "time: Current time of the simulation" << std::endl;
     }
-    else if (userChoise == 3) 
+    else if (command == "step")
     {
-        makeOffer();
+        std::cout << "step: Go to next time frame of the simulation" << std::endl;
     }
-    else if (userChoise == 4) 
+    else if (command == "spread")
     {
-        makeBid();
+        std::cout << "spread: Calculates quoted spread of the current time step" << std::endl;
     }
-    else if (userChoise == 5) 
+    else if (command == "min")
     {
-        checkWallet();
+        std::cout << "min: Finds the smallest ask/bid for any product" << std::endl;
     }
-    else if (userChoise == 6) 
+    else if (command == "max")
     {
-        goToNext();
+        std::cout << "max: Finds the biggest ask/bid for any product" << std::endl;
     }
-    else if (userChoise == 7) 
+    else if (command == "avg")
     {
-        exit();
+        std::cout << "avg: Finds the average ask/bid for any product in certain timestep" << std::endl;
     }
-    else 
+    else if (command == "predict")
+    {
+        std::cout << "predict: Predicts the min/max of ask/bid for any product" << std::endl;
+    }
+    else
     {
         printBadOption();
     }
+}
 
-   
+void MerkelMain::printBadOption() {
+    std::cout << "Invalid input. Use help for all the commands list" << std::endl;
+}
+
+void MerkelMain::printProducts() {
+    std::string product = "";
+    for (std::string s : orderBook.getKnownProducts())
+    {
+        product = product + " " + s;
+    }
+    std::cout << "All products:" << product << std::endl;
+}
+
+void MerkelMain::goToNext() {
+
+    std::cout << "Going to next time frame. " << std::endl;
+    //Set the timer to next timeframe
+    currentTime = orderBook.getNextTime(currentTime);
+    std::cout << "Time is : " << currentTime << std::endl;
+}
+
+void MerkelMain::printMin(OrderBookType type, std::string product) {
+    //Filter order book with given type and product
+    std::vector<OrderBookEntry> filteredOrders = orderBook.getOrders(type, product, currentTime);
+    //Incase user entered wrong type and product 
+    if (filteredOrders.size() == 0)
+    {
+        std::cout << "User input invalid! Please enter input in these order: min product orderType" << std::endl;
+    }
+    else //If the input is correst
+    {
+        //Find the min price from filtered orders
+        double min = orderBook.getLowestPrice(filteredOrders);
+        if (type == OrderBookType::bid)  //If the input is bid
+        {
+            std::cout << "Minimum bid price for " << product << " is: " << min << std::endl;
+        }
+        if (type == OrderBookType::ask) //If the input is ask
+        {
+            std::cout << "Minimum ask price for " << product << " is: " << min << std::endl;
+        }
+    }
+}
+
+void MerkelMain::printMax(OrderBookType type, std::string product) {
+    //Filter order book with given type and product
+    std::vector<OrderBookEntry> filteredOrders = orderBook.getOrders(type, product, currentTime);
+    //Incase user entered wrong type and product 
+    if (filteredOrders.size() == 0)
+    {
+        std::cout << "User input invalid! Please enter input in these order: max product orderType" << std::endl;
+    }
+    else //If the input is correst
+    {
+        //Find the max price from filtered orders
+        double max = orderBook.getHighestPrice(filteredOrders);
+        if (type == OrderBookType::bid)  //If the input is bid
+        {
+            std::cout << "Maximum bid price for " << product << " is: " << max << std::endl;
+        }
+        if (type == OrderBookType::ask) //If the input is ask
+        {
+            std::cout << "Maximum ask price for " << product << " is: " << max << std::endl;
+        }
+    }
+}
+
+void MerkelMain::exit() {
+    std::cout << "Goodbye" << std::endl;
 }
 
