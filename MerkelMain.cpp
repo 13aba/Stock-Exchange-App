@@ -13,6 +13,7 @@ void MerkelMain::init()
     std::vector<std::string> input;
     //set current time to earliest one in the order book
     currentTime = orderBook.getEarliestTime();
+    timebank.push_back(currentTime);
     while (true) 
     {
         input = getUserInput();
@@ -72,25 +73,62 @@ void MerkelMain::processUserInput(std::vector<std::string>  userChoise) {
         }
         else if (pointer == "spread")
         {
-            printSpread(userChoise[1]);
+            if (userChoise.size() == 2)
+            {
+                printSpread(userChoise[1]);
+            }
+            else
+            {
+                printBadOption();
+            }
         }
         else if (pointer == "min")
         {
-            OrderBookType type = OrderBookEntry::stringToOrderType(userChoise[2]);
-            printMin(type , userChoise[1]);
+            if (userChoise.size() == 3)
+            {
+                OrderBookType type = OrderBookEntry::stringToOrderType(userChoise[2]);
+                printMin(type, userChoise[1]);
+            }
+            else
+            {
+                printBadOption();
+            }
         }
         else if (pointer == "max")
         {
-            OrderBookType type = OrderBookEntry::stringToOrderType(userChoise[2]);
-            printMax(type, userChoise[1]);
+            if (userChoise.size() == 3)
+            {
+                OrderBookType type = OrderBookEntry::stringToOrderType(userChoise[2]);
+                printMax(type, userChoise[1]);
+            }
+            else
+            {
+                printBadOption();
+            }
         }
         else if (pointer == "avg")
         {
-            std::cout << "avg" << std::endl;
+            if (userChoise.size() == 4)
+            {
+                OrderBookType type = OrderBookEntry::stringToOrderType(userChoise[2]);
+                printAvg(type, userChoise[1], userChoise[3]);
+            }
+            else
+            {
+                printBadOption();
+            }
+            
         }
         else if (pointer == "predict")
         {
-            std::cout << "predict" << std::endl;
+            if (userChoise.size() == 4)
+            {
+               
+            }
+            else
+            {
+                printBadOption();
+            }
         }
         else
         {
@@ -157,10 +195,14 @@ void MerkelMain::printProducts() {
 
 void MerkelMain::goToNext() {
 
-    std::cout << "Going to next time frame. " << std::endl;
     //Set the timer to next timeframe
     currentTime = orderBook.getNextTime(currentTime);
+    //Add current time to timebank
+    timebank.push_back(currentTime);
+    //Print out the time to user
+    std::cout << "Going to next time frame. " << std::endl;
     std::cout << "Time is : " << currentTime << std::endl;
+    std::cout << timebank.size() << " :steps since simulation started" << std::endl;
 }
 
 void MerkelMain::printSpread(std::string product) {
@@ -230,7 +272,45 @@ void MerkelMain::printMax(OrderBookType type, std::string product) {
     }
 }
 
-void MerkelMain::exit() {
-    std::cout << "Goodbye" << std::endl;
+void MerkelMain::printAvg(OrderBookType type, std::string product, std::string timesteps) {
+    //Check if given string is convertable to integer
+    try 
+    {
+        int steps = stoi(timesteps);
+        //If user input bigger steps for average than the time passed
+        if (timebank.size() < steps)
+        {
+            std::cout << "Please enter smaller step than time frames passed since simulation started" << std::endl;
+            std::cout << "Current time frame is: " << timebank.size() << " step/s since simulation started" << std::endl;
+        }
+        else // if step input is valid
+        {
+            //New order book for to average
+            std::vector<OrderBookEntry> averageOrders;
+            //Add specified amount of last time frame to new order book
+            for (int i=0 ; i< steps; i++)
+            {
+                std::vector<OrderBookEntry> newOrders = orderBook.getOrders(type, product, timebank[timebank.size()-1-i]);
+                averageOrders.insert(averageOrders.end(), newOrders.begin(), newOrders.end());  
+            }
+            //If user input wrong type or product there will be 0 orders
+            if (averageOrders.size() == 0)
+            {
+                std::cout << "Wrong type or product name entered! Please check and try again" << std::endl;
+            }
+            else //if input is valid 
+            {
+                //Find average using order book function
+                double average = orderBook.getAverage(averageOrders);
+                //Print out the average
+                std::cout << "Average price of " << product << " in: " << steps << " time step is: " << average << std::endl;
+            }
+        }
+    } //If not let user know
+    catch(const std::exception& e)
+    {
+        std::cout << "Please enter integer for steps needed for average" << std::endl;
+    }
+    
 }
 

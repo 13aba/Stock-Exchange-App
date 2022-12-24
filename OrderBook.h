@@ -25,6 +25,9 @@ class OrderBook
 		/* Get qouted spread of bid-ask*/
 		static double getQuotedSpread(double min, double max);
 
+		/* Get average price of given order entries*/
+		static double getAverage(std::vector<OrderBookEntry>& orders);
+
 		/* Return earliest timeframe from dataset*/
 		std::string getEarliestTime();
 

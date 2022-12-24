@@ -90,5 +90,15 @@ std::string OrderBook::getNextTime(std::string timestamp) {
 	return nextTime;
 }
 
+double OrderBook::getAverage(std::vector<OrderBookEntry>& orders) {
+	//double to hold all price sum
+	double netPrice = 0;
+	for (OrderBookEntry order : orders) 
+	{
+		netPrice = netPrice + order.price;
+	}
+	double average = netPrice / orders.size();
+	return average;
+}
 
 

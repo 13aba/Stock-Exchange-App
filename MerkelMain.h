@@ -28,14 +28,16 @@ class MerkelMain
         void printMin(OrderBookType type, std::string product);
         /*Find min for given type and product*/
         void printMax(OrderBookType type, std::string product);
+        /*Print average of type and product over the specified timestep*/
+        void printAvg(OrderBookType type, std::string product, std::string timesteps);
         /*Go to next time step*/
         void goToNext();
-        /* Close the programm*/
-        void exit();
         /* Call the proper functions depending on the user input*/
         void processUserInput(std::vector<std::string>  userChoise);
-
+        /*Current time in string form*/
         std::string currentTime;
+        /*Vector containing previous time frames*/
+        std::vector<std::string> timebank;
 
         OrderBook orderBook = OrderBook{ "20200601.csv" };
         Wallet wallet;
