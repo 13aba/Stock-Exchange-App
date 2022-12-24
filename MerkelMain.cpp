@@ -123,7 +123,8 @@ void MerkelMain::processUserInput(std::vector<std::string>  userChoise) {
         {
             if (userChoise.size() == 4)
             {
-               
+                OrderBookType type = OrderBookEntry::stringToOrderType(userChoise[3]);
+                printPredict(type, userChoise[2], userChoise[1]);
             }
             else
             {
@@ -314,3 +315,54 @@ void MerkelMain::printAvg(OrderBookType type, std::string product, std::string t
     
 }
 
+void MerkelMain::printPredict(OrderBookType type, std::string product, std::string minMax) {
+    
+    try
+    {
+        std::cout << predictSmooth(timebank.size() - 1, type, product, minMax) << std::endl;
+    }
+    catch (std::invalid_argument& e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+}
+
+double MerkelMain::predictSmooth(int index, OrderBookType type, std::string product, std::string minMax) {
+    //Prediction
+    double prediction;
+    //Exponential smoothing factor
+    double alpha = 0.2;
+    //Filter the order book for given type and product
+    std::vector<OrderBookEntry> filteredOrders = orderBook.getOrders(type, product, timebank[index]);
+    //Double to hold current value
+    double currentValue;
+    //Check if user inputted correct type and product 
+    if (filteredOrders.size() == 0) 
+    {
+        throw std::invalid_argument("Invalid type or product please check and try again!");
+    }
+    //Check if min or max should be calculated
+    if (minMax == "max") //If max
+    {
+        currentValue = orderBook.getHighestPrice(filteredOrders);
+    }
+    else if (minMax == "min") //IF min
+    {
+        currentValue = orderBook.getLowestPrice(filteredOrders);
+    }
+    else //If user input is invalid
+    {
+        throw std::invalid_argument("Input should be either max or min");
+    }
+    //If index is higher than 0 we have not reached first time frame so recurse the function
+    if (index > 0)
+    {
+
+        prediction = alpha * currentValue + (1 - alpha) * predictSmooth(index - 1, type, product, minMax);
+    }
+    else //If index reached 0 prediction is equal to current value of the item and we stop recursing 
+    {
+        prediction = currentValue;
+    }
+    return prediction;
+}

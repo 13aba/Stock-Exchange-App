@@ -22,12 +22,16 @@ class MerkelMain
         void printDetailedHelp(std::string command);
         /* Print all products*/
         void printProducts();
-        /*Find spread for given product*/
+        /*Print spread for given product*/
         void printSpread(std::string product);
-        /*Find min for given type and product*/
+        /*Print min for given type and product*/
         void printMin(OrderBookType type, std::string product);
-        /*Find min for given type and product*/
+        /*PRint min for given type and product*/
         void printMax(OrderBookType type, std::string product);
+        /*Print prediction for given type and product*/
+        void printPredict(OrderBookType type, std::string product, std::string minMax);
+        /*Find prediction using exponential smoothing*/
+        double predictSmooth(int index, OrderBookType type, std::string product, std::string minMax);
         /*Print average of type and product over the specified timestep*/
         void printAvg(OrderBookType type, std::string product, std::string timesteps);
         /*Go to next time step*/
